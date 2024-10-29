@@ -1,0 +1,26 @@
+--user check and generetor
+SELECT 
+meneguel.ordem,
+meneguel.usergerador as usergerador,
+meneguel.usercheck as usercheck,
+min(meneguel.inicio) as incio,
+max(meneguel.fim) as fim,
+sum(meneguel.solicitada) as solicitada,
+sum(meneguel.conferida) as qtdconfeerida
+from
+(select 
+oc.NumCarregamento as ordem,
+osi.DataHoraIni as inicio,
+osi.DataHoraFin as fim,
+QtdSolicitada as solicitada,
+QtdAtendida as conferida,
+CodUsuarioExecucao as usercheck,
+oc.CodUsuarioGerado as usergerador
+from OrdemServicoItem osi 
+INNER join OrdemServicoCab oc on (oc.CodOrdemServicoCab = osi.CodOrdemServicoCab)
+where oc.DtGeracao BETWEEN '20230801' and GETDATE() 
+--and oc.NumCarregamento = 78135
+and QtdSolicitadaCx is not NULL
+and osi.CodUsuarioExecucao is not null
+)meneguel
+GROUP BY meneguel.ordem,meneguel.usercheck,meneguel.usergerador
