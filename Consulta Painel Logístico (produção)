@@ -1,0 +1,28 @@
+Consulta para o painel logístico (produção): 
+--separação com time
+SELECT 
+xuxa.ordem,
+min(xuxa.inicio) as inicio,
+max(xuxa.fim) as fim,
+xuxa.id_usuario,
+xuxa.loginuser,
+sum(xuxa.qtdsolicitada) as qtdsolicitada,
+sum(xuxa.qtdcorte) as qtdcorte,
+sum(xuxa.qtdseparada) as qtdserada
+from
+(select 
+osc.NumCarregamento as ordem,
+osi.DataHoraIni as inicio,
+osi.DataHoraFin as fim,
+osc.CodUsuarioIniciou as id_usuario,
+u.NomeUsuario as nomeuser,
+u.LoginUsuario as loginuser,
+osi.QtdSolicitada as qtdsolicitada,
+osi.QtdSeparada as qtdseparada,
+osi.QtdCortada as qtdcorte
+from OrdemServicoItem osi 
+inner join OrdemServicoCab osc on (osi.CodOrdemServicoCab = osc.CodOrdemServicoCab)
+inner join Usuario u on (u.CodUsuario = osi.CodUsuarioExecucao)
+where osi.DataHoraIni BETWEEN'20230801'and getdate()
+and osi.QtdSolicitadaCx is null )xuxa
+GROUP by xuxa.ordem,xuxa.id_usuario,xuxa.loginuser
